@@ -8,12 +8,10 @@ package net.media.training.live.lsp;
  * To change this template use File | Settings | File Templates.
  */
 public class PersistentObject<T> {
-    private String data;
+    private T data;
 
     public PersistentObject(T data) {
-        if (!(data instanceof String))
-            throw new IllegalArgumentException("Element type should be string, but you passed : " + data.toString());
-        this.data = (String) data;
+        this.data = data;
     }
 
     public Object getData() {

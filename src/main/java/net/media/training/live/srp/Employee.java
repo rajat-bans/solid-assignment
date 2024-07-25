@@ -1,5 +1,6 @@
 package net.media.training.live.srp;
 
+import javax.swing.text.html.HTML;
 
 public class Employee {
     private int empId;
@@ -34,31 +35,75 @@ public class Employee {
     public Employee() {
     }
 
-    public String toHtml() {
-        String str = "<div>" +
-                "<h1>Employee Info</h1>" +
-                "<div id='emp" + empId + "'>" +
-                "<span>" + name + "</span>" +
-                "<div class='left'>" +
-                "<span>Leave Left :</span>" +
-                "<span>Annual Salary:</span>" +
-                "<span>Manager:</span>" +
-                "<span>Reimbursable Leave:</span>" +
-                "</div>";
-        str += "<div class='right'><span>" + (totalLeaveAllowed - leaveTaken) + "</span>";
-        str += "<span>" + Math.round(monthlySalary * 12) + "</span>";
-        if (manager != null) str += "<span>" + manager + "</span>";
-        else str += "<span>None</span>";
+    public int getLeavesRemaining(){
+        return this.totalLeaveAllowed - this.leaveTaken;
+    }
+
+    public long getMonthlySalary(){
+        return Math.round(this.monthlySalary * 12);
+    }
+
+    public String getManager(){
+        if(this.manager != null)
+            return this.manager;
+        return "None";
+    }
+
+    public int getTotalLeaveLeftPreviously(){
         int years = 3;
-        if (yearsInOrg < 3) {
-            years = yearsInOrg;
+        if (this.yearsInOrg < 3) {
+            years = this.yearsInOrg;
         }
         int totalLeaveLeftPreviously = 0;
         for (int i = 0; i < years; i++) {
-            totalLeaveLeftPreviously += leavesLeftPreviously[yearsInOrg-i-1];
+            totalLeaveLeftPreviously += this.leavesLeftPreviously[this.yearsInOrg-i-1];
         }
-        str += "<span>" + totalLeaveLeftPreviously + "</span>";
-        return str + "</div> </div>";
+        return totalLeaveLeftPreviously;
+    }
+
+    public String getEmployeeName(){
+        return this.name;
+    }
+
+    public String toHtml(){
+        String str = HTMLConverter.getSpanTag(this.getEmployeeName());
+
+        String labelsTags = HTMLConverter.getSpanTag("Leave Left :");
+        labelsTags += HTMLConverter.getSpanTag("Annual Salary:");
+        labelsTags += HTMLConverter.getSpanTag("Manager:");
+        labelsTags += HTMLConverter.getSpanTag("Reimbursable Leave:");
+        str += HTMLConverter.getDivClassTag("left", labelsTags);
+    
+        String infoTags = HTMLConverter.getSpanTag(Integer.toString(this.getLeavesRemaining()));
+        infoTags += HTMLConverter.getSpanTag(Long.toString(this.getMonthlySalary()));
+        infoTags += HTMLConverter.getSpanTag(this.getManager());
+        infoTags += HTMLConverter.getSpanTag(Integer.toString(this.getTotalLeaveLeftPreviously()));
+        str += HTMLConverter.getDivClassTag("right", infoTags);
+        
+        return "<div>" + HTMLConverter.getH1Tag("Employee Info") + HTMLConverter.getDivIdTag("emp1", str);
     }
     //other method related to customer
+}
+
+
+class HTMLConverter{
+    public static String getDivTag(String content){
+        return "<div>" + content + "</div>";
+    }
+
+    public static String getDivIdTag(String idName, String content){
+        return "<div id='"+ idName + "'>" + content + "</div>";
+    }
+
+    public static String getDivClassTag(String className, String content){
+        return "<div class='"+ className + "'>" + content + "</div>";
+    }
+
+    public static String getSpanTag(String content){
+        return "<span>" + content + "</span>";
+    }
+
+    public static String getH1Tag(String content){
+        return "<h1>" + content + "</h1>";
+    }
 }
